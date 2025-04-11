@@ -1,0 +1,3 @@
+# filepath: config.py
+API_KEY = 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
+

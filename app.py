@@ -2,6 +2,7 @@ import streamlit as st
 from check import fetch_stock_data
 import re
 from datetime import datetime
+from config import API_KEY
 
 # --- Styling ---
 st.set_page_config(page_title="📈 Stock Data Assistant", layout="centered")
