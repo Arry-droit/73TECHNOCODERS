@@ -1,0 +1,140 @@
+[
+    {
+        "title": "Stock Market",
+        "url": "https://finance.yahoo.com/topic/stock-market-news/",
+        "author": "Unknown",
+        "published_date": null,
+        "content": "Gold climbed to new highs on Friday as Treasurys and the dollar came under pressure.\n\nWall Street is set to wrap up another week of tariff-fueled turmoil.",
+        "mentioned_tickers": [
+            "NYSE",
+            "L",
+            "J",
+            "FAST",
+            "ETF",
+            "NVDA",
+            "P",
+            "TXN",
+            "T",
+            "S",
+            "B"
+        ]
+    },
+    {
+        "title": "Stocks: Most Actives",
+        "url": "https://finance.yahoo.com/markets/stocks/most-active/",
+        "author": "Unknown",
+        "published_date": null,
+        "content": "Private Company Data\n\nTrack valuations, funding rounds, and more before IPO.",
+        "mentioned_tickers": [
+            "TTM",
+            "L",
+            "J",
+            "P",
+            "T",
+            "S",
+            "B"
+        ]
+    },
+    {
+        "title": "Stocks: Gainers",
+        "url": "https://finance.yahoo.com/markets/stocks/gainers/",
+        "author": "Unknown",
+        "published_date": null,
+        "content": "Private Company Data\n\nTrack valuations, funding rounds, and more before IPO.",
+        "mentioned_tickers": [
+            "TTM",
+            "L",
+            "J",
+            "P",
+            "T",
+            "S",
+            "B"
+        ]
+    },
+    {
+        "title": "Stocks: Losers",
+        "url": "https://finance.yahoo.com/markets/stocks/losers/",
+        "author": "Unknown",
+        "published_date": null,
+        "content": "Private Company Data\n\nTrack valuations, funding rounds, and more before IPO.",
+        "mentioned_tickers": [
+            "TTM",
+            "L",
+            "J",
+            "P",
+            "T",
+            "S",
+            "B"
+        ]
+    },
+    {
+        "title": "Stock Comparison",
+        "url": "https://finance.yahoo.com/compare/",
+        "author": "Unknown",
+        "published_date": null,
+        "content": "Oops, something went wrong\n\nSign in to access your portfolio",
+        "mentioned_tickers": [
+            "L",
+            "J",
+            "P",
+            "T",
+            "S",
+            "B"
+        ]
+    },
+    {
+        "title": "Pre-Markets",
+        "url": "https://www.cnbc.com/pre-markets/",
+        "author": "Unknown",
+        "published_date": null,
+        "content": "Credit Cards\n\nLoans",
+        "mentioned_tickers": [
+            "BNPL",
+            "CCPA"
+        ]
+    },
+    {
+        "title": "U.S. Markets",
+        "url": "https://www.cnbc.com/us-markets/",
+        "author": "Unknown",
+        "published_date": null,
+        "content": "Credit Cards\n\nLoans",
+        "mentioned_tickers": [
+            "BNPL",
+            "CCPA"
+        ]
+    },
+    {
+        "title": "Europe Markets",
+        "url": "https://www.cnbc.com/markets-europe/",
+        "author": "Unknown",
+        "published_date": null,
+        "content": "Credit Cards\n\nLoans",
+        "mentioned_tickers": [
+            "BNPL",
+            "CCPA"
+        ]
+    },
+    {
+        "title": "China Markets",
+        "url": "https://www.cnbc.com/china-markets/",
+        "author": "Unknown",
+        "published_date": null,
+        "content": "Credit Cards\n\nLoans",
+        "mentioned_tickers": [
+            "BNPL",
+            "CCPA"
+        ]
+    },
+    {
+        "title": "Asia Markets",
+        "url": "https://www.cnbc.com/markets-asia-pacific/",
+        "author": "Unknown",
+        "published_date": null,
+        "content": "Credit Cards\n\nLoans",
+        "mentioned_tickers": [
+            "BNPL",
+            "CCPA"
+        ]
+    }
+]

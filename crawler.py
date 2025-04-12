@@ -4,7 +4,7 @@ import time
 import re
 import json
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib.parse import urljoin
 
 class YahooFinanceScraper:
@@ -17,11 +17,35 @@ class YahooFinanceScraper:
         self.cnbc_url = 'https://www.cnbc.com/finance/'
         self.articles = []
         self.keywords = keywords or []
+        self.last_run_file = os.path.join(output_dir, "last_run.txt")
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
+    def should_run_crawler(self):
+        """Check if crawler should run based on last run time."""
+        if not os.path.exists(self.last_run_file):
+            return True
+
+        try:
+            with open(self.last_run_file, 'r') as f:
+                last_run_str = f.read().strip()
+                last_run = datetime.fromisoformat(last_run_str)
+                time_since_last_run = datetime.now() - last_run
+                return time_since_last_run > timedelta(hours=6)
+        except Exception:
+            return True
+
+    def update_last_run_time(self):
+        """Update the last run time to current time."""
+        with open(self.last_run_file, 'w') as f:
+            f.write(datetime.now().isoformat())
+
     def scrape_yahoo_finance(self, max_articles=5, debug=False):
+        if not self.should_run_crawler():
+            print("Crawler was run recently (within last 6 hours). Skipping...")
+            return
+
         print(f"Scraping Yahoo Finance news listings...")
         try:
             response = requests.get(self.yahoo_url, headers=self.headers)
@@ -62,11 +86,16 @@ class YahooFinanceScraper:
                 print(f"Failed to fetch Yahoo Finance. Status code: {response.status_code}")
         except Exception as e:
             print(f"Error scraping Yahoo Finance: {e}")
+
     def get_articles(self):
         """Return the list of scraped articles."""
         return self.articles
 
     def scrape_cnbc(self, max_articles=5, debug=False):
+        if not self.should_run_crawler():
+            print("Crawler was run recently (within last 6 hours). Skipping...")
+            return
+
         print(f"Scraping CNBC Finance news listings...")
         try:
             response = requests.get(self.cnbc_url, headers=self.headers)
@@ -176,14 +205,23 @@ class YahooFinanceScraper:
     def save_results(self, output_format="json"):
         if not self.articles:
             print("No articles to save.")
-            return
+            return None
 
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         json_path = f"{self.output_dir}/finance_articles_{timestamp}.json"
-        with open(json_path, 'w', encoding='utf-8') as f:
-            json.dump(self.articles, f, ensure_ascii=False, indent=4)
-        print(f"Articles saved to JSON: {os.path.abspath(json_path)}")
-        return json_path
+        
+        try:
+            with open(json_path, 'w', encoding='utf-8') as f:
+                json.dump(self.articles, f, ensure_ascii=False, indent=4)
+            
+            # Update last run time after successful save
+            self.update_last_run_time()
+            
+            print(f"Articles saved to JSON: {os.path.abspath(json_path)}")
+            return json_path
+        except Exception as e:
+            print(f"Error saving results: {e}")
+            return None
 
 
 if __name__ == "__main__":

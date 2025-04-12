@@ -1,12 +1,11 @@
 import streamlit as st
 import json
 import os
-from crawler import YahooFinanceScraper
-from keyword_extract import extract_keywords, summarize_article
 from dotenv import load_dotenv
 import re
 from datetime import datetime
 from openai import OpenAI
+import glob
 
 # Load environment variables
 load_dotenv()
@@ -61,6 +60,34 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+def get_latest_scraped_data():
+    """Get the most recent scraped data file from the finance_data directory."""
+    data_dir = "finance_data"
+    if not os.path.exists(data_dir):
+        return None
+    
+    # Get all JSON files in the finance_data directory
+    files = glob.glob(os.path.join(data_dir, "finance_articles_*.json"))
+    if not files:
+        return None
+    
+    # Get the most recent file based on timestamp in filename
+    latest_file = max(files, key=os.path.getctime)
+    return latest_file
+
+def load_latest_articles():
+    """Load the most recent scraped articles."""
+    latest_file = get_latest_scraped_data()
+    if not latest_file:
+        return None
+    
+    try:
+        with open(latest_file, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading articles: {e}")
+        return None
+
 # --- Title & Instructions ---
 st.markdown('<div class="title">📊 Financial News Assistant</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Ask questions about financial news and get AI-powered answers with related articles</div>', unsafe_allow_html=True)
@@ -72,84 +99,53 @@ prompt = st.text_input("🗣️ Enter your question:")
 if st.button("🚀 Submit"):
     if prompt:
         try:
-            # Initialize scraper
-            scraper = YahooFinanceScraper(keywords=["stock", "market"])
-            scraper.scrape_yahoo_finance(max_articles=5)
-            scraper.scrape_cnbc(max_articles=5)
-            
-            # Save and load results
-            saved_file = scraper.save_results()
-            if not saved_file:
-                st.error("❌ Failed to fetch news data")
-            else:
-                try:
-                    with open(saved_file, 'r', encoding='utf-8') as f:
-                        articles = json.load(f)
-                    
-                    if not articles:
-                        st.warning("⚠️ No articles found")
-                    else:
-                        # Process articles and create context
-                        article_contexts = []
-                        for article in articles:
-                            content = article.get("content", "")
-                            title = article.get("title", "Unknown Title")
-                            url = article.get("url", "No URL provided")
-                            
-                            # Get summary and keywords
-                            summary = summarize_article(content)
-                            keywords = extract_keywords(content)
-                            
-                            if summary and keywords:
-                                article_contexts.append({
-                                    "title": title,
-                                    "url": url,
-                                    "summary": summary,
-                                    "keywords": keywords
-                                })
+            # Load existing articles
+            articles = load_latest_articles()
+            if not articles:
+                st.error("❌ No articles found. Please wait for the next scheduled crawl.")
+                st.stop()
+
+            # Create context from existing articles
+            context = "\n\n".join([
+                f"Title: {article.get('title', '')}\n"
+                f"Content: {article.get('content', '')}\n"
+                f"URL: {article.get('url', '')}\n"
+                for article in articles
+            ])
+
+            # Generate response using existing data
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": """You are a financial news expert. 
+                        Answer questions based on the provided article summaries and context.
+                        Always include 2 relevant article links that best answer the user's question.
+                        Format your response with:
+                        1. A direct answer to the question in 3-4 lines
+                        2. Two relevant summarized article links with a line explanations of why they're relevant"""},
+                        {"role": "user", "content": f"""Context from recent financial articles:
+                        {context}
                         
-                        # Create context for RAG
-                        context = "\n\n".join([
-                            f"Article: {art['title']}\nSummary: {art['summary']}\nKeywords: {art['keywords']}"
-                            for art in article_contexts
-                        ])
+                        Question: {prompt}
                         
-                        # Generate RAG response
-                        try:
-                            response = client.chat.completions.create(
-                                model="gpt-3.5-turbo",
-                                messages=[
-                                    {"role": "system", "content": """You are a financial news expert. 
-                                    Answer questions based on the provided article summaries and context.
-                                    Always include 2 relevant article links that best answer the user's question.
-                                    Format your response with:
-                                    1. A direct answer to the question in 3-4 lines
-                                    2. Two relevant article links with a line explanations of why they're relevant"""},
-                                    {"role": "user", "content": f"""Context from recent financial articles:
-                                    {context}
-                                    
-                                    Question: {prompt}
-                                    
-                                    Please provide a detailed answer with relevant article links."""}
-                                ],
-                                temperature=0.7,
-                                max_tokens=500
-                            )
-                            
-                            # Display the response
-                            st.success("🤖 AI Analysis")
-                            st.markdown(f"""
-                                <div class="data-box">
-                                    {response.choices[0].message.content}
-                                </div>
-                            """, unsafe_allow_html=True)
-                            
-                        except Exception as e:
-                            st.error(f"⚠️ Error generating AI response: {str(e)}")
-                            
-                except Exception as e:
-                    st.error(f"❌ Error loading articles: {str(e)}")
-                    
+                        Please provide a detailed answer with relevant article links."""}
+                    ],
+                    temperature=0.7,
+                    max_tokens=500
+                )
+                
+                # Display the response
+                st.success("🤖 AI Analysis")
+                st.markdown(f"""
+                    <div class="data-box">
+                        {response.choices[0].message.content}
+                    </div>
+                """, unsafe_allow_html=True)
+                
+            except Exception as e:
+                st.error(f"⚠️ Error generating AI response: {str(e)}")
+                
         except Exception as e:
             st.error(f"❌ An unexpected error occurred: {str(e)}")
     else:
