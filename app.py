@@ -17,45 +17,162 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 st.set_page_config(page_title="📈 Financial News Assistant", layout="centered")
 st.markdown("""
     <style>
+    /* Base theme colors */
+    :root {
+        --bg-primary: #121212;
+        --bg-secondary: #1e1e1e;
+        --bg-tertiary: #2e2e2e;
+        --text-primary: #ffffff;
+        --text-secondary: #b0b0b0;
+        --accent: #4a9eff;
+        --accent-hover: #3a8eff;
+        --border: #3e3e3e;
+        --border-hover: #4e4e4e;
+        --shadow: rgba(0,0,0,0.2);
+    }
+    
+    /* Main container */
+    .stApp {
+        background-color: var(--bg-primary);
+    }
+    
+    /* Typography */
     .title {
         font-size: 2.5rem;
         font-weight: 700;
-        color: #ffffff;
+        color: var(--text-primary);
         text-align: center;
         margin-bottom: 0.5em;
+        text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
     }
+    
     .subtitle {
         font-size: 1.2rem;
-        color: #b0b0b0;
+        color: var(--text-secondary);
         text-align: center;
         margin-bottom: 2em;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
     }
+    
+    /* Data display */
     .data-box {
-        background-color: #1e1e1e;
-        padding: 1.2em;
-        border-radius: 10px;
-        box-shadow: 0px 2px 10px rgba(0,0,0,0.2);
-        margin-top: 1em;
-        color: #ffffff;
+        background-color: var(--bg-secondary);
+        padding: 1.5em;
+        border-radius: 12px;
+        box-shadow: 0px 4px 15px var(--shadow);
+        margin-top: 1.5em;
+        color: var(--text-primary);
+        border-left: 4px solid var(--accent);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .stApp {
-        background-color: #121212;
+    
+    .data-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0px 6px 20px rgba(0,0,0,0.3);
     }
+    
+    /* Form elements */
     .stTextInput>div>div>input {
-        background-color: #1e1e1e;
-        color: #ffffff;
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        padding: 0.7em 1em;
+        transition: all 0.2s ease;
     }
+    
+    .stTextInput>div>div>input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent);
+    }
+    
+    /* Buttons */
     .stButton>button {
-        background-color: #2e2e2e;
-        color: #ffffff;
-        border: 1px solid #3e3e3e;
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.5em 1.2em;
+        font-weight: 500;
+        transition: all 0.2s ease;
     }
+    
     .stButton>button:hover {
-        background-color: #3e3e3e;
-        border: 1px solid #4e4e4e;
+        background-color: var(--accent);
+        border-color: var(--accent-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(74, 158, 255, 0.3);
     }
+    
+    .stButton>button:active {
+        transform: translateY(0);
+    }
+    
+    /* Links */
     a {
-        color: #4a9eff;
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    
+    a:hover {
+        color: var(--accent-hover);
+        text-decoration: underline;
+    }
+    
+    /* Status messages */
+    .element-container .stAlert {
+        border-radius: 8px;
+        padding: 0.5em;
+    }
+    
+    .element-container .stAlert > div {
+        border-radius: 8px;
+        padding: 1em;
+    }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: var(--bg-secondary);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: var(--bg-tertiary);
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--border);
+    }
+    
+    /* Article styling */
+    .article-link {
+        display: block;
+        margin-top: 0.8em;
+        padding: 0.8em;
+        background-color: rgba(74, 158, 255, 0.1);
+        border-radius: 8px;
+        border-left: 3px solid var(--accent);
+        transition: all 0.2s ease;
+    }
+    
+    .article-link:hover {
+        background-color: rgba(74, 158, 255, 0.15);
+        transform: translateX(3px);
+    }
+    
+    /* Emoji styling */
+    .emoji {
+        font-size: 1.2em;
+        margin-right: 0.3em;
+        vertical-align: middle;
     }
     </style>
 """, unsafe_allow_html=True)
