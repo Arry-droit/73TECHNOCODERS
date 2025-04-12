@@ -1,2 +1,2 @@
 # filepath: .gitignore
-config.py
+.env
