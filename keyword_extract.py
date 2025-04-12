@@ -18,6 +18,7 @@ def extract_keywords(content):
                 {"role": "user", "content": f"""Analyze this financial news article and provide:
 1. 3-5 most important keywords or entities (companies, events, economic terms)
 2. Overall sentiment (Positive/Negative/Neutral)
+                3. link to the article
 
 Article:
 {content}
