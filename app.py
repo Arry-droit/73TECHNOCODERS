@@ -40,10 +40,13 @@ st.markdown("""
     .title {
         font-size: 2.5rem;
         font-weight: 700;
-        color: var(--text-primary);
+        color: #ffffff !important;
         text-align: center;
         margin-bottom: 0.5em;
         text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+        background: none !important;
+        -webkit-background-clip: unset !important;
+        -webkit-text-fill-color: #ffffff !important;
     }
     
     .subtitle {
